@@ -154,7 +154,6 @@ class ModelProviderRegistry:
                 return None
             # Initialize non-custom provider with just API key
             provider = provider_class(api_key=api_key)
-
         # Cache the instance
         instance._initialized_providers[provider_type] = provider
 

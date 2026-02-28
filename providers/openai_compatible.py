@@ -631,6 +631,19 @@ class OpenAICompatibleProvider(ModelProvider):
                     f"falling back to chat/completions for model {resolved_model}"
                 )
                 use_responses_api = False
+# When a custom base URL is configured (e.g. CLIProxyAPI, LiteLLM),
+        # force chat/completions because most proxies don't implement /responses.
+        if use_responses_api and self.base_url:
+            default_openai_urls = (
+                "https://api.openai.com",
+                "https://api.x.ai",
+            )
+            if not any(self.base_url.startswith(u) for u in default_openai_urls):
+                logging.info(
+                    f"Custom base_url detected ({self.base_url}); "
+                    f"falling back to chat/completions for model {resolved_model}"
+                )
+                use_responses_api = False
         if use_responses_api:
             # These models require the /v1/responses endpoint for stateful context
             # If it fails, we should not fall back to chat/completions
